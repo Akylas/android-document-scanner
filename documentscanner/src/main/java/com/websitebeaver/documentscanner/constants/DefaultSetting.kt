@@ -12,9 +12,9 @@ class DefaultSetting {
         const val LET_USER_ADJUST_CROP = true
         const val SHOW_COLOR_FILTERS = false
         const val AUTO_FOCUS = true
-        val FLASH_MODE = CameraFlashMode.AUTO
+        val FLASH_MODE = CameraFlashMode.OFF
         const val MAX_NUM_DOCUMENTS = 24
-        const val MAX_NUM_SIMULATNEOUS_DOCUMENTS = 1
+        const val MAX_NUM_SIMULTANEOUS_DOCUMENTS = 1
         const val RESPONSE_TYPE = ResponseType.IMAGE_FILE_PATH
     }
 }

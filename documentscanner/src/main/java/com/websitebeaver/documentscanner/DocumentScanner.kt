@@ -27,27 +27,28 @@ import java.io.File
  * @param croppedImageQuality the 0 - 100 quality of the cropped image
  * @constructor creates document scanner
  */
-class DocumentScanner(
+
+class DocumentScanner @JvmOverloads constructor(
     private val activity: ComponentActivity,
-    val successHandler: ((documentScanResults: ArrayList<String>) -> Unit)? = null,
+    val successHandler: ((documentScanResults: ArrayList<String>) -> Unit),
     val errorHandler: ((errorMessage: String) -> Unit)? = null,
     val cancelHandler: (() -> Unit)? = null,
-    var responseType: String? = DefaultSetting.RESPONSE_TYPE,
+    var responseType: String? = null,
     var letUserAdjustCrop: Boolean? = null,
-    var flashMode: Boolean? = null,
+    var flashMode: Int? = null,
     var autoFocus: Boolean? = null,
     var showColorFilters: Boolean? = null,
     var maxNumDocuments: Int? = null,
     var maxNumSimultaneousDocuments: Int? = null,
-    var croppedImageQuality: Int? = DefaultSetting.CROPPED_IMAGE_QUALITY,
-    var customAnalyserClass: String? = null
-) {
+    var croppedImageQuality: Int? = null,
+    var customAnalyserClass: String? = null,
     var getContent: ActivityResultLauncher<Intent>? = null
-
+) {
     init {
-        getContent = activity.registerForActivityResult(
+        getContent = getContent ?: activity.registerForActivityResult(
             StartActivityForResult()
         ) { result: ActivityResult -> handleDocumentScanIntentResult(result) }
+        responseType = responseType ?: DefaultSetting.RESPONSE_TYPE
     }
 
     /**
@@ -55,38 +56,54 @@ class DocumentScanner(
      */
     fun createDocumentScanIntent(): Intent {
         val documentScanIntent = Intent(activity, DocumentScannerActivity::class.java)
-        documentScanIntent.putExtra(
-            DocumentScannerExtra.EXTRA_CROPPED_IMAGE_QUALITY,
-            croppedImageQuality
-        )
-        documentScanIntent.putExtra(
-            DocumentScannerExtra.EXTRA_LET_USER_ADJUST_CROP,
-            letUserAdjustCrop
-        )
-        documentScanIntent.putExtra(
-            DocumentScannerExtra.EXTRA_MAX_NUM_DOCUMENTS,
-            maxNumDocuments
-        )
-        documentScanIntent.putExtra(
-            DocumentScannerExtra.EXTRA_MAX_NUM_SIMULTANEOUS_DOCUMENTS,
-            maxNumSimultaneousDocuments
-        )
-        documentScanIntent.putExtra(
-            DocumentScannerExtra.EXTRA_FLASH_MODE,
-            flashMode
-        )
-        documentScanIntent.putExtra(
-            DocumentScannerExtra.EXTRA_AUTO_FOCUS,
-            autoFocus
-        )
-        documentScanIntent.putExtra(
-            DocumentScannerExtra.EXTRA_SHOW_COLOR_FILTERS,
-            showColorFilters
-        )
-        documentScanIntent.putExtra(
-            DocumentScannerExtra.EXTRA_CUSTOM_ANALYSER_CLASS,
-            customAnalyserClass
-        )
+        if (croppedImageQuality != null) {
+            documentScanIntent.putExtra(
+                DocumentScannerExtra.EXTRA_CROPPED_IMAGE_QUALITY,
+                croppedImageQuality
+            )
+        }
+        if (letUserAdjustCrop != null) {
+            documentScanIntent.putExtra(
+                DocumentScannerExtra.EXTRA_LET_USER_ADJUST_CROP,
+                letUserAdjustCrop
+            )
+        }
+        if (maxNumDocuments != null) {
+            documentScanIntent.putExtra(
+                DocumentScannerExtra.EXTRA_MAX_NUM_DOCUMENTS,
+                maxNumDocuments
+            )
+        }
+        if (maxNumSimultaneousDocuments != null) {
+            documentScanIntent.putExtra(
+                DocumentScannerExtra.EXTRA_MAX_NUM_SIMULTANEOUS_DOCUMENTS,
+                maxNumSimultaneousDocuments
+            )
+        }
+        if (flashMode != null) {
+            documentScanIntent.putExtra(
+                DocumentScannerExtra.EXTRA_FLASH_MODE,
+                flashMode
+            )
+        }
+        if (autoFocus != null) {
+            documentScanIntent.putExtra(
+                DocumentScannerExtra.EXTRA_AUTO_FOCUS,
+                autoFocus
+            )
+        }
+        if (showColorFilters != null) {
+            documentScanIntent.putExtra(
+                DocumentScannerExtra.EXTRA_SHOW_COLOR_FILTERS,
+                showColorFilters
+            )
+        }
+        if (customAnalyserClass != null) {
+            documentScanIntent.putExtra(
+                DocumentScannerExtra.EXTRA_CUSTOM_ANALYSER_CLASS,
+                customAnalyserClass
+            )
+        }
 
         return documentScanIntent
     }

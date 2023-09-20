@@ -6,14 +6,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Point
-import android.graphics.Rect
-import android.graphics.RectF
 import android.media.Image
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.StrictMode
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
@@ -68,7 +65,7 @@ class DocumentScannerActivity : AppCompatActivity() {
     /**
      * @property maxNumSimultaneousDocuments maximum number of documents can be simultaneously scanned
      */
-    private var maxNumSimultaneousDocuments = DefaultSetting.MAX_NUM_SIMULATNEOUS_DOCUMENTS
+    private var maxNumSimultaneousDocuments = DefaultSetting.MAX_NUM_SIMULTANEOUS_DOCUMENTS
 
     /**
      * @property letUserAdjustCrop whether or not to let user move automatically detected corners
@@ -133,6 +130,7 @@ class DocumentScannerActivity : AppCompatActivity() {
             ImageUtil.getImageFromFile(file, maxWidth = screenWidth)
         }
             .onFailure { e ->
+                e.printStackTrace()
                 finishIntentWithError(e.message ?: "Error")
             }
             .getOrNull() ?: return
@@ -198,6 +196,7 @@ class DocumentScannerActivity : AppCompatActivity() {
                 // display cropper, and allow user to move corners
                 imageView.quads = (cornersInImagePreviewCoordinates)
             } catch (exception: Exception) {
+                exception.printStackTrace()
                 finishIntentWithError(
                     "unable get image preview ready: ${exception.message}"
                 )
@@ -337,6 +336,7 @@ class DocumentScannerActivity : AppCompatActivity() {
             }
 
         } catch (exception: Exception) {
+            exception.printStackTrace()
             finishIntentWithError(
                 "invalid extra: ${exception.message}"
             )
@@ -364,6 +364,7 @@ class DocumentScannerActivity : AppCompatActivity() {
         try {
             setPhotoMode(inPhotoMode)
         } catch (exception: Exception) {
+            exception.printStackTrace()
             finishIntentWithError(
                 "error opening camera: ${exception.message}"
             )
@@ -789,6 +790,7 @@ class DocumentScannerActivity : AppCompatActivity() {
                     imageView.colorFilter
                 )
             } catch (exception: Exception) {
+                exception.printStackTrace()
                 finishIntentWithError("unable to crop image: ${exception.message}")
                 continue
             } finally {
@@ -812,6 +814,7 @@ class DocumentScannerActivity : AppCompatActivity() {
                     }
                 }
             } catch (exception: Exception) {
+                exception.printStackTrace()
                 finishIntentWithError(
                     "unable to save cropped image: ${exception.message}"
                 )
