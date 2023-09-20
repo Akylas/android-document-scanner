@@ -12,7 +12,7 @@ import android.graphics.Bitmap
  */
 class Document(
     val originalPhotoPath: String,
-    val preview: Bitmap,
-    var corners: Quad
+    val preview: Bitmap?,
+    var quad: Quad?
 ) {
 }

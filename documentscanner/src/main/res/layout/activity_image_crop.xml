@@ -5,27 +5,37 @@
     android:layout_height="match_parent"
     tools:context=".DocumentScannerActivity">
 
+    <com.websitebeaver.documentscanner.cameraview.CameraView
+        android:id="@+id/camera_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/camera_preview" />
+    <com.websitebeaver.documentscanner.ui.CropView
+        android:id="@+id/crop_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
     <com.websitebeaver.documentscanner.ui.ImageCropView
         android:id="@+id/image_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/image_crop_view_initial_height"
         android:contentDescription="@string/image_with_cropper" />
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/image_view"
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
         <include
+            android:id="@+id/filters_view"
             layout="@layout/filters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:orientation="horizontal"
             android:paddingHorizontal="@dimen/buttons_container_horizontal_padding">
@@ -52,6 +62,7 @@
                 android:layout_weight="1">
 
                 <com.websitebeaver.documentscanner.ui.DoneButton
+                    android:layout_margin="20dp"
                     android:id="@+id/complete_document_scan_button"
                     android:layout_width="@dimen/large_button_diameter"
                     android:layout_height="@dimen/large_button_diameter"
@@ -60,8 +71,15 @@
                     android:src="@drawable/ic_baseline_check_24"
                     android:stateListAnimator="@animator/button_grow_animation" />
 
-            </FrameLayout>
+                <com.websitebeaver.documentscanner.ui.CircleTextButton
+                    android:id="@+id/document_counter_button"
+                    android:layout_marginRight="5dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical|right"
+                    android:background="@android:color/transparent"/>
 
+            </FrameLayout>
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -74,6 +92,15 @@
                     android:layout_gravity="center"
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_baseline_add_24"
+                    android:stateListAnimator="@animator/button_grow_animation" />
+
+                <com.websitebeaver.documentscanner.ui.CircleButton
+                    android:id="@+id/flash_button"
+                    android:layout_width="@dimen/small_button_diameter"
+                    android:layout_height="@dimen/small_button_diameter"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/flash_auto_24"
                     android:stateListAnimator="@animator/button_grow_animation" />
 
             </FrameLayout>

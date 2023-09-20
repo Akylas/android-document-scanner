@@ -4,4 +4,5 @@
     <string name="filter_grayscale">Grayscale</string>
     <string name="filter_black_white"><![CDATA[Black & White]]></string>
     <string name="filter_photo">Photo</string>
+    <string name="camera_preview">Content with camera preview</string>
 </resources>

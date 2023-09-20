@@ -1,13 +1,14 @@
 package com.websitebeaver.documentscanner.models
 
+import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.RectF
+import androidx.core.graphics.toPoint
 import com.websitebeaver.documentscanner.enums.QuadCorner
 import com.websitebeaver.documentscanner.extensions.distance
 import com.websitebeaver.documentscanner.extensions.move
 import com.websitebeaver.documentscanner.extensions.multiply
 import com.websitebeaver.documentscanner.extensions.toPointF
-import org.opencv.core.Point
 
 /**
  * This class is used to represent the cropper. It contains 4 corners.
@@ -40,6 +41,47 @@ class Quad(
     )
 
     /**
+     * @constructor creates a quad from OpenCV points
+     */
+    constructor(
+        points: List<Point>
+    ) : this(
+        PointF(points[0]),
+        PointF(points[1]),
+        PointF(points[3]),
+        PointF(points[2])
+    )
+
+    companion object {
+
+        fun getQuadAndCornerClosestToPoint(
+            quads: List<Quad>?,
+            point: PointF
+        ): Pair<Int, QuadCorner>? {
+            if (quads == null) {
+                return null
+            }
+            var minIndex: Int = -1
+            var minDist: Float = Float.MAX_VALUE
+            var minCorner: QuadCorner = QuadCorner.BOTTOM_LEFT
+            quads.forEachIndexed { index, quad ->
+                for (corner in quad.corners) {
+                    var dist = corner.value.distance(point)
+                    if (dist < minDist) {
+                        minCorner = corner.key
+                        minDist = dist
+                        minIndex = index
+                    }
+                }
+            }
+            if (minIndex != -1) {
+                return Pair(minIndex, minCorner)
+            }
+            return null
+        }
+    }
+
+    /**
      * @property corners lets us get the point coordinates for any corner
      */
     var corners: MutableMap<QuadCorner, PointF> = mutableMapOf(
@@ -52,12 +94,24 @@ class Quad(
     /**
      * @property edges 4 lines that connect the 4 corners
      */
-    val edges: Array<Line> get() = arrayOf(
-        Line(topLeftCorner, topRightCorner),
-        Line(topRightCorner, bottomRightCorner),
-        Line(bottomRightCorner, bottomLeftCorner),
-        Line(bottomLeftCorner, topLeftCorner)
-    )
+    val edges: Array<Line>
+        get() = arrayOf(
+            Line(topLeftCorner, topRightCorner),
+            Line(topRightCorner, bottomRightCorner),
+            Line(bottomRightCorner, bottomLeftCorner),
+            Line(bottomLeftCorner, topLeftCorner)
+        )
+
+    /**
+     * @property cornersList
+     */
+    val cornersList: Array<Point>
+        get() = arrayOf(
+            topLeftCorner.toPoint(),
+            topRightCorner.toPoint(),
+            bottomRightCorner.toPoint(),
+            bottomLeftCorner.toPoint()
+        )
 
     /**
      * This finds the corner that's closest to a point. When a user touches to drag
@@ -69,6 +123,7 @@ class Quad(
     fun getCornerClosestToPoint(point: PointF): QuadCorner {
         return corners.minByOrNull { corner -> corner.value.distance(point) }?.key!!
     }
+
 
     /**
      * This moves a corner by (dx, dy)
@@ -107,6 +162,15 @@ class Quad(
                 imagePreviewBounds.left,
                 imagePreviewBounds.top
             )
+        )
+    }
+
+    fun applyRatio(ratio: Float): Quad {
+        return Quad(
+            topLeftCorner.multiply(ratio),
+            topRightCorner.multiply(ratio),
+            bottomRightCorner.multiply(ratio),
+            bottomLeftCorner.multiply(ratio)
         )
     }
 

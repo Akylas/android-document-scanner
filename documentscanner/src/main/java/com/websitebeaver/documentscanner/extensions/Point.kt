@@ -1,9 +1,9 @@
 package com.websitebeaver.documentscanner.extensions
 
+import android.graphics.Point
 import android.graphics.PointF
 import kotlin.math.pow
 import kotlin.math.sqrt
-import org.opencv.core.Point
 
 /**
  * converts an OpenCV point to Android point
@@ -21,7 +21,7 @@ fun Point.toPointF(): PointF {
  * @return the distance between this point and the 2nd point
  */
 fun Point.distance(point: Point): Double {
-    return sqrt((point.x - x).pow(2) + (point.y - y).pow(2))
+    return sqrt((point.x - x).toDouble().pow(2) + (point.y - y).toDouble().pow(2))
 }
 
 /**
@@ -32,16 +32,7 @@ fun Point.distance(point: Point): Double {
  * @return the OpenCV point after moving it (dx, dy)
  */
 fun Point.move(dx: Double, dy: Double): Point {
-    return Point(x + dx, y + dy)
-}
-
-/**
- * converts an Android point to OpenCV point
- *
- * @return OpenCV point
- */
-fun PointF.toOpenCVPoint(): Point {
-    return Point(x.toDouble(), y.toDouble())
+    return Point((x + dx).toInt(), (y + dy).toInt())
 }
 
 /**

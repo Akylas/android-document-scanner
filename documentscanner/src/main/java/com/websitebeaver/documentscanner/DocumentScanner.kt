@@ -4,7 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.*
 import com.websitebeaver.documentscanner.constants.DefaultSetting
 import com.websitebeaver.documentscanner.constants.DocumentScannerExtra
 import com.websitebeaver.documentscanner.constants.ResponseType
@@ -33,12 +34,22 @@ class DocumentScanner(
     private val cancelHandler: (() -> Unit)? = null,
     private var responseType: String? = null,
     private var letUserAdjustCrop: Boolean? = null,
+    private var flashMode: Boolean? = null,
+    private var autoFocus: Boolean? = null,
+    private var showColorFilters: Boolean? = null,
     private var maxNumDocuments: Int? = null,
-    private var croppedImageQuality: Int? = null
+    private var maxNumSimultaneousDocuments: Int? = null,
+    private var croppedImageQuality: Int? = null,
+    private var customAnalyserClass: String? = null
 ) {
+    var getContent: ActivityResultLauncher<Intent>? = null
+
     init {
         responseType = responseType ?: DefaultSetting.RESPONSE_TYPE
         croppedImageQuality = croppedImageQuality ?: DefaultSetting.CROPPED_IMAGE_QUALITY
+        getContent = activity.registerForActivityResult(
+            StartActivityForResult()
+        ) { result: ActivityResult -> handleDocumentScanIntentResult(result) }
     }
 
     /**
@@ -58,6 +69,26 @@ class DocumentScanner(
             DocumentScannerExtra.EXTRA_MAX_NUM_DOCUMENTS,
             maxNumDocuments
         )
+        documentScanIntent.putExtra(
+            DocumentScannerExtra.EXTRA_MAX_NUM_SIMULTANEOUS_DOCUMENTS,
+            maxNumSimultaneousDocuments
+        )
+        documentScanIntent.putExtra(
+            DocumentScannerExtra.EXTRA_FLASH_MODE,
+            flashMode
+        )
+        documentScanIntent.putExtra(
+            DocumentScannerExtra.EXTRA_AUTO_FOCUS,
+            autoFocus
+        )
+        documentScanIntent.putExtra(
+            DocumentScannerExtra.EXTRA_SHOW_COLOR_FILTERS,
+            showColorFilters
+        )
+        documentScanIntent.putExtra(
+            DocumentScannerExtra.EXTRA_CUSTOM_ANALYSER_CLASS,
+            customAnalyserClass
+        )
 
         return documentScanIntent
     }
@@ -67,21 +98,24 @@ class DocumentScanner(
      *
      * @param result the document scanner activity result
      */
-     fun handleDocumentScanIntentResult(result: ActivityResult) {
+    fun handleDocumentScanIntentResult(result: ActivityResult) {
         try {
             // make sure responseType is valid
             if (!arrayOf(
                     ResponseType.BASE64,
                     ResponseType.IMAGE_FILE_PATH
-                ).contains(responseType)) {
-                throw Exception("responseType must be either ${ResponseType.BASE64} " +
-                        "or ${ResponseType.IMAGE_FILE_PATH}")
+                ).contains(responseType)
+            ) {
+                throw Exception(
+                    "responseType must be either ${ResponseType.BASE64} " +
+                            "or ${ResponseType.IMAGE_FILE_PATH}"
+                )
             }
 
             when (result.resultCode) {
                 Activity.RESULT_OK -> {
                     // check for errors
-                    val error = result.data?.extras?.get("error") as String?
+                    val error = result.data?.extras?.getString("error")
                     if (error != null) {
                         throw Exception("error - $error")
                     }
@@ -100,7 +134,7 @@ class DocumentScanner(
                         val base64CroppedImages =
                             croppedImageResults.map { croppedImagePath ->
                                 // read cropped image from file path, and convert to base 64
-                                val base64Image = ImageUtil().readBitmapFromFileUriString(
+                                val base64Image = ImageUtil.readBitmapFromFileUriString(
                                     croppedImagePath,
                                     activity.contentResolver
                                 ).toBase64(croppedImageQuality!!)
@@ -133,9 +167,6 @@ class DocumentScanner(
      * add document scanner result handler and launch the document scanner
      */
     fun startScan() {
-        activity.registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result: ActivityResult -> handleDocumentScanIntentResult(result) }
-            .launch(createDocumentScanIntent())
+        getContent?.launch(createDocumentScanIntent())
     }
 }

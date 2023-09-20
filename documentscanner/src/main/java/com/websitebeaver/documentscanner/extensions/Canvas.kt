@@ -61,12 +61,25 @@ fun Canvas.drawQuad(
         )
     }
 
+    drawQuadSimple(quad, cropperLinesAndCornersStyles)
+}
+
+/**
+ * This draws a quad (used to draw cropper). It draws 4 circles and
+ * 4 connecting lines
+ *
+ * @param quad 4 corners
+ * @param cropperLinesAndCornersStyles quad style (color, thickness for example)
+ */
+fun Canvas.drawQuadSimple(
+    quad: Quad,
+    cropperLinesAndCornersStyles: Paint,
+) {
     // draw 4 connecting lines
     for (edge: Line in quad.edges) {
         drawLine(edge.from.x, edge.from.y, edge.to.x, edge.to.y, cropperLinesAndCornersStyles)
     }
 }
-
 /**
  * This draws the check icon on the finish document scan button. It's needed
  * because the inner circle covers the check icon.

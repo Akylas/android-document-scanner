@@ -56,7 +56,7 @@ class CameraUtil(
      */
     @Throws(IOException::class)
     fun openCamera(pageNumber: Int) {
-        // create intent to launch camera
+      //   create intent to launch camera
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
         // create new file for photo
