@@ -29,24 +29,22 @@ import java.io.File
  */
 class DocumentScanner(
     private val activity: ComponentActivity,
-    private val successHandler: ((documentScanResults: ArrayList<String>) -> Unit)? = null,
-    private val errorHandler: ((errorMessage: String) -> Unit)? = null,
-    private val cancelHandler: (() -> Unit)? = null,
-    private var responseType: String? = null,
-    private var letUserAdjustCrop: Boolean? = null,
-    private var flashMode: Boolean? = null,
-    private var autoFocus: Boolean? = null,
-    private var showColorFilters: Boolean? = null,
-    private var maxNumDocuments: Int? = null,
-    private var maxNumSimultaneousDocuments: Int? = null,
-    private var croppedImageQuality: Int? = null,
-    private var customAnalyserClass: String? = null
+    val successHandler: ((documentScanResults: ArrayList<String>) -> Unit)? = null,
+    val errorHandler: ((errorMessage: String) -> Unit)? = null,
+    val cancelHandler: (() -> Unit)? = null,
+    var responseType: String? = DefaultSetting.RESPONSE_TYPE,
+    var letUserAdjustCrop: Boolean? = null,
+    var flashMode: Boolean? = null,
+    var autoFocus: Boolean? = null,
+    var showColorFilters: Boolean? = null,
+    var maxNumDocuments: Int? = null,
+    var maxNumSimultaneousDocuments: Int? = null,
+    var croppedImageQuality: Int? = DefaultSetting.CROPPED_IMAGE_QUALITY,
+    var customAnalyserClass: String? = null
 ) {
     var getContent: ActivityResultLauncher<Intent>? = null
 
     init {
-        responseType = responseType ?: DefaultSetting.RESPONSE_TYPE
-        croppedImageQuality = croppedImageQuality ?: DefaultSetting.CROPPED_IMAGE_QUALITY
         getContent = activity.registerForActivityResult(
             StartActivityForResult()
         ) { result: ActivityResult -> handleDocumentScanIntentResult(result) }
