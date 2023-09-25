@@ -74,7 +74,7 @@ dependencies {
 publishing {
     publications {
         release(MavenPublication) {
-            groupId = 'com.github.RomanTsarou'
+            groupId = 'com.github.akylas'
             artifactId = 'android-document-scanner'
             version = '2.0.0-SNAPSHOT'
 
