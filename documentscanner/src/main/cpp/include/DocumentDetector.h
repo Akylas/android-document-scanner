@@ -27,7 +27,7 @@ namespace detector {
 
     private:
         float resizeScale = 1.0f;
-        int resizeThreshold = 500;
+        int resizeThreshold = 300;
         int imageRotation = 0;
         int areaScaleMinFactor = 6;
         double contoursApproxEpsilonFactor = 0.03;
